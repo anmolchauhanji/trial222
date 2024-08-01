@@ -1,28 +1,3 @@
-#!/bin/bash
-##########
-# About:                        # Comment added here
-# This script interacts with the GitHub API to list users with read access to a repository. # Comment added here
-#                                                
-# Input:                        # Comment added here
-# - GitHub username and personal access token      # Comment added here
-# - Repository owner and name                      # Comment added here
-#                                                 
-# Owner:                        # Comment added here
-# Replace with your name or GitHub username        # Comment added here
-##########
-
-# GitHub API URL
-API_URL="https://api.github.com"
-
-# GitHub username and personal access token
-USERNAME=$username
-TOKEN=$token
-
-# User and Repository information
-REPO_OWNER=$1
-REPO_NAME=$2
-
-# Function to make a GET request to the GitHub API
 function github_api_get {
     local endpoint="$1"
     local url="${API_URL}/${endpoint}"
@@ -36,7 +11,11 @@ function list_users_with_read_access {
     local endpoint="repos/${REPO_OWNER}/${REPO_NAME}/collaborators"
 
     # Fetch the list of collaborators on the repository
-    collaborators="$(github_api_get "$endpoint" | jq -r '.[] | select(.permissions.pull == true) | .login')"
+    response=$(github_api_get "$endpoint")
+    echo "API Response:"
+    echo "$response"
+    
+    collaborators=$(echo "$response" | jq -r '.[] | select(.permissions.pull == true) | .login')
 
     # Display the list of collaborators with read access
     if [[ -z "$collaborators" ]]; then
@@ -46,8 +25,3 @@ function list_users_with_read_access {
         echo "$collaborators"
     fi
 }
-
-# Main script
-
-echo "Listing users with read access to ${REPO_OWNER}/${REPO_NAME}..."
-list_users_with_read_access
