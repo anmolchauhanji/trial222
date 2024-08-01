@@ -1,3 +1,4 @@
+# Function to make a GET request to the GitHub API
 function github_api_get {
     local endpoint="$1"
     local url="${API_URL}/${endpoint}"
@@ -12,6 +13,8 @@ function list_users_with_read_access {
 
     # Fetch the list of collaborators on the repository
     response=$(github_api_get "$endpoint")
+    
+    # Print the raw response for debugging purposes
     echo "API Response:"
     echo "$response"
     
@@ -25,3 +28,7 @@ function list_users_with_read_access {
         echo "$collaborators"
     fi
 }
+
+# Main script
+echo "Listing users with read access to ${REPO_OWNER}/${REPO_NAME}..."
+list_users_with_read_access
